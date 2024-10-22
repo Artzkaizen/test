@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import {
-	Sidebar,
 	SidebarContent,
 	SidebarHeader,
 	SidebarItem,
@@ -11,23 +10,26 @@ import { CustomPopover } from "./popover";
 import CustomSelect from "./custom-select";
 import { useState } from "react";
 
-export function AppSidebar({
+export function CustomSidebar({
 	topics,
 	onClick,
 	currentTopic,
 }: {
 	topics: CourseInfo[];
 	currentTopic: CourseInfo | null;
-	onClick: (topic: CourseInfo) => void;
+	onClick: (topic: CourseInfo | null) => void;
 }) {
 	const [group, setGroup] = useState("all");
 	return (
-		<Sidebar className="oveflow-hidden break-before-auto">
+		<section className="oveflow-hidden break-before-auto">
 			<SidebarHeader>
 				<span className="font-bold">Übersicht</span>
 				<CustomSelect
 					group={group}
-					onSelectChange={(value: string) => setGroup(value)}
+					onSelectChange={(value: string) => {
+						setGroup(value);
+						onClick(null);
+					}}
 					className="w-fit ml-auto"
 					label={"Alle Teilnehmer/innen"}
 					placeholder={"Getrennte Gruppen"}
@@ -51,7 +53,7 @@ export function AppSidebar({
 									onClick={() => onClick(topic)}
 									variant="ghost"
 									className={cn(
-										"group relative *:text-start flex h-fit flex-col items-start justify-start rounded border-primary transition-all duration-300 group-hover:block *:text-foreground",
+										"group relative *:text-start flex h-fit flex-col items-start justify-start rounded border-primary transition-all duration-300 group-hover:block",
 										{
 											"bg-primary/10 *:font-semibold border-l-4 border-primary":
 												topic.record_id === currentTopic?.record_id,
@@ -71,19 +73,19 @@ export function AppSidebar({
 							</SidebarItem>
 						);
 					})}
-				{/* <SidebarItem>
-					<Button>
+				<SidebarItem>
+					<Button asChild>
 						<a
 							href={`${import.meta.env.VITE_PUBLIC_MOODLE_ADD_URL?.replace(
 								"module",
 								topics[0].course_module_id
 							)}`}
 						>
-							tou
+							Add
 						</a>
 					</Button>
-				</SidebarItem> */}
+				</SidebarItem>
 			</SidebarContent>
-		</Sidebar>
+		</section>
 	);
 }

@@ -1,10 +1,10 @@
-import { SidebarLayout, SidebarTrigger } from "./components/ui/sidebar";
+import { SidebarTrigger } from "./components/ui/sidebar";
 
-import { AppSidebar } from "./components/app-sidebar";
+import { CustomSidebar } from "./components/sidebar";
 import { useEffect, useState } from "react";
 import { CourseInfo } from "./types/course";
-import VideoPlayer from "./components/video-player";
-import CourseTabs from "./components/course-tabs";
+// import VideoPlayer from "./components/video-player";
+// import CourseTabs from "./components/course-tabs";
 
 declare global {
 	interface Window {
@@ -103,7 +103,7 @@ const Header = () => {
 
 	return (
 		<header
-			className={`flex items-center z-50 py-1 fixed w-full justify-between transition-colors duration-300 ${
+			className={`flex items-center z-50 py-1 fixed justify-between transition-colors duration-300 ${
 				scrolled ? "bg-secondary/90" : "bg-transparent"
 			}`}
 		>
@@ -116,27 +116,28 @@ const Header = () => {
 function App() {
 	const [currentTopic, setCurrentTopic] = useState<CourseInfo | null>(null);
 
-	const handleTopicChange = (topic: CourseInfo) => setCurrentTopic(topic);
+	const handleTopicChange = (topic: CourseInfo | null) =>
+		setCurrentTopic(topic);
 	return (
-		<section className="relative">
-			<SidebarLayout defaultOpen>
-				<AppSidebar
+		<main className="flex relative w-full transition-all duration-300 ease-in-out">
+			<nav className="w-80 fixed z-50 overflow-hidden">
+				<CustomSidebar
 					topics={window.records ?? []}
 					onClick={handleTopicChange}
 					currentTopic={currentTopic}
 				/>
-				<main className="flex relative flex-col w-full transition-all duration-300 ease-in-out">
-					<Header />
-					<div className="flex-1 h-full w-full rounded-md p-2 mt-10">
-						{currentTopic ? (
-							<CourseComponent topic={currentTopic} />
-						) : (
-							<div>Select a topic</div>
-						)}
-					</div>
-				</main>
-			</SidebarLayout>
-		</section>
+			</nav>
+			<section className="w-full ml-80">
+				<Header />
+				<div className="flex-1 h-full rounded-md  p-2 mt-10 overflow-clip">
+					{currentTopic ? (
+						<CourseComponent topic={currentTopic} />
+					) : (
+						<div>Select a topic</div>
+					)}
+				</div>
+			</section>
+		</main>
 	);
 }
 
@@ -144,12 +145,24 @@ function CourseComponent({ topic }: { topic: CourseInfo }) {
 	return (
 		<section className="w-full h-full">
 			{topic?.recording_id && (
-				<VideoPlayer
-					topic={topic}
-					src={`https://vroom.b-trend.media/presentation/${topic.recording_id}/video/webcams.webm`}
-				/>
+				// <VideoPlayer
+				// 	topic={topic}
+				// 	src={`https://vroom.b-trend.media/presentation/${topic.recording_id}/video/webcams.webm`}
+				// />
+
+				<iframe
+					srcDoc={`
+							<video controls>
+							<source src=https://vroom.b-trend.media/presentation/${topic.recording_id}/video/webcams.webm type='video/webm'>
+							<track kind='subtitles' srclang='en' src='/video.vtt' label='English'>
+							Your browser does not support the video tag.
+							</video>
+						`}
+					width="640"
+					height="360"
+				></iframe>
 			)}
-			<CourseTabs topic={topic} />
+			{/* <CourseTabs topic={topic} /> */}
 		</section>
 	);
 }

@@ -69,7 +69,7 @@ export default function CourseTabs({ topic }: CourseTabsProps) {
 							className={cn(
 								"w-full border-b-2 px-1 py-4 text-center text-sm font-medium",
 								activeTab === tab.id
-									? "border-blue-500 text-blue-600 transition-all duration-300 ease-in-out"
+									? "border-primary/80 text-primary transition-all duration-300 ease-in-out"
 									: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
 							)}
 							aria-current={activeTab === tab.id ? "page" : undefined}
