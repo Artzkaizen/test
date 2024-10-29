@@ -9,5 +9,5 @@ export interface CourseInfo {
 	präsentation: string | null;
 	group_id: string | null;
 	group_name: string | null;
-	recording_id: string | null;
+	recording_ids: string[];
 }

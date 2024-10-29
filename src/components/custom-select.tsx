@@ -24,7 +24,7 @@ export default function CustomSelect({
 }: CustomSelectProps) {
 	const uniqueGroups = Array.from(
 		new Map(
-			window.records
+			window.course.records
 				.filter((item) => item.group_id && item.group_name)
 				.map((item) => [
 					item.group_id,

@@ -3,9 +3,6 @@ import parse from "html-react-parser";
 import { CourseInfo } from "@/types/course";
 import { cn, formatTime } from "@/lib/utils";
 
-// import { useVideoStore } from "@/hooks/useVideoStore";
-// import useFetchCues from "@/hooks/useFetchCues";
-
 const tabs = [
 	{ id: "tagesinhalte", label: "Tagesinhalte" },
 	{ id: "tagesfolien", label: "Tagesfolien" },
@@ -25,37 +22,9 @@ interface CourseTabsProps {
 }
 
 export default function CourseTabs({ topic }: CourseTabsProps) {
-	// const { currentTime } = useVideoStore();
 	const [activeTab, setActiveTab] = useState("tagesinhalte");
 	const [activeCueIndex] = useState(-1);
 
-	// const cues = useFetchCues("/video.vtt", topic?.record_id ?? "");
-
-	// const updateActiveCueIndex = () => {
-	// 	const index = cues.data?.findIndex(
-	// 		(cue) => currentTime >= cue.startTime && currentTime <= cue.endTime
-	// 	);
-	// 	setActiveCueIndex(index!);
-	// };
-
-	// useEffect(() => {
-	// 	const index = cues.data?.findIndex(
-	// 		(cue) => currentTime >= cue.startTime && currentTime <= cue.endTime
-	// 	);
-	// 	setActiveCueIndex(index!);
-	// }, [currentTime, cues]);
-
-	// if (!topic) {
-	// 	return null;
-	// }
-
-	// useEffect(() => {
-	// 	updateActiveCueIndex();
-	// }, [currentTime, cues]);
-
-	// if (!topic) {
-	// 	return null;
-	// }
 	const cues: Cue[] = [];
 
 	return (

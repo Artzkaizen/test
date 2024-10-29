@@ -28,6 +28,7 @@ export default function VideoPlayer({
 	src: string;
 	topic: CourseInfo | undefined;
 }) {
+
 	const player = useVideoStore();
 
 	const videoRef = useRef<HTMLVideoElement>(null);
@@ -177,7 +178,6 @@ export default function VideoPlayer({
 			? `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
 			: `${minutes}:${seconds.toString().padStart(2, "0")}`;
 	};
-	if (!topic?.recording_id) return null;
 
 	return (
 		<div

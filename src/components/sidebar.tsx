@@ -1,3 +1,4 @@
+import { Course } from "@/App";
 import { Button } from "@/components/ui/button";
 import {
 	SidebarContent,
@@ -6,37 +7,51 @@ import {
 } from "@/components/ui/sidebar";
 import { cn, parseMlangString } from "@/lib/utils";
 import { CourseInfo } from "@/types/course";
-import { CustomPopover } from "./popover";
-import CustomSelect from "./custom-select";
 import { useState } from "react";
+import CustomSelect from "./custom-select";
+import { CustomPopover } from "./popover";
 
 export function CustomSidebar({
-	topics,
+	course,
 	onClick,
 	currentTopic,
 }: {
-	topics: CourseInfo[];
+	course: Course | null;
 	currentTopic: CourseInfo | null;
-	onClick: (topic: CourseInfo | null) => void;
+	onClick: (topic: CourseInfo | null, videoUrl: string | null) => void;
 }) {
 	const [group, setGroup] = useState("all");
+	const [activeVideo, setActiveVideo] = useState<{
+		url: string | null;
+		id: string;
+	} | null>(null);
+
+	const handleVideoClick = (
+		topic: CourseInfo | null,
+		videoUrl: string | null,
+		id: string
+	) => {
+		setActiveVideo({ url: videoUrl, id });
+		onClick(topic, videoUrl);
+	};
+
 	return (
-		<section className="oveflow-hidden break-before-auto">
-			<SidebarHeader>
+		<section className="break-before-auto border-r-2 overflow-auto">
+			<SidebarHeader className="sticky top-0 left-0 z-50 bg-primary-foreground/10">
 				<span className="font-bold">Übersicht</span>
 				<CustomSelect
 					group={group}
 					onSelectChange={(value: string) => {
 						setGroup(value);
-						onClick(null);
+						onClick(null, null);
 					}}
 					className="w-fit ml-auto"
 					label={"Alle Teilnehmer/innen"}
 					placeholder={"Getrennte Gruppen"}
 				/>
 			</SidebarHeader>
-			<SidebarContent>
-				{topics
+			<SidebarContent className="p-0 oveflow-auto ">
+				{course?.records
 					.filter(
 						(topic) =>
 							topic.lernfeld !== null &&
@@ -48,28 +63,61 @@ export function CustomSidebar({
 							: new Date().toLocaleDateString("de-DE");
 
 						return (
-							<SidebarItem key={topic.record_id}>
-								<Button
-									onClick={() => onClick(topic)}
-									variant="ghost"
+							<SidebarItem key={topic.record_id} className="p-0">
+								<div
 									className={cn(
-										"group relative *:text-start flex h-fit flex-col items-start justify-start rounded border-primary transition-all duration-300 group-hover:block",
+										"relative group hover:bg-primary/10 transition-all rounded duration-300 group-hover:block",
 										{
 											"bg-primary/10 *:font-semibold border-l-4 border-primary":
 												topic.record_id === currentTopic?.record_id,
 										}
 									)}
 								>
-									<span className="w-64 overflow-hidden text-clip text-balance font-medium">
+									<Button
+										onClick={() => onClick(topic, null)}
+										variant="ghost"
+										className={cn(
+											"text-start flex h-fit flex-col w-full text-balance font-medium px-0 pl-1 items-start justify-start border-primary hover:bg-transparent break-words"
+										)}
+									>
 										{parseMlangString(topic.lernfeld, "de")}
-									</span>
-									<span className="block text-sm">{formatDate}</span>
+										<span className="block text-sm">{formatDate}</span>
+									</Button>
 									<CustomPopover
 										classname="group-hover:opacity-100"
 										record={topic.record_id}
 										data={topic.data_id}
+										user={course.user}
 									/>
-								</Button>
+								</div>
+								{topic.recording_ids && (
+									<div>
+										{topic.recording_ids?.map((videoUrl, idx) => (
+											<Button
+												key={videoUrl + idx}
+												onClick={() =>
+													handleVideoClick(
+														topic,
+														videoUrl ?? null,
+														topic.record_id + idx
+													)
+												}
+												variant="ghost"
+												className={cn(
+													"flex w-full flex-col ml-2 m-0 pt-0 mt-0  justify-start text-start items-start transition-all duration-300",
+													{
+														"*:font-semibold text-primary ":
+															topic.record_id === currentTopic?.record_id &&
+															activeVideo?.url === videoUrl &&
+															activeVideo?.id === topic.record_id + idx,
+													}
+												)}
+											>
+												|---- Video Teil {idx + 1}
+											</Button>
+										))}
+									</div>
+								)}
 							</SidebarItem>
 						);
 					})}
@@ -78,7 +126,7 @@ export function CustomSidebar({
 						<a
 							href={`${import.meta.env.VITE_PUBLIC_MOODLE_ADD_URL?.replace(
 								"module",
-								topics[0].course_module_id
+								course?.records[0].course_module_id ?? ""
 							)}`}
 						>
 							Add
