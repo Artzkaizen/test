@@ -43,6 +43,7 @@ export default function VideoPlayer({
 		const updateTime = () => player.setCurrentTime(video.currentTime);
 		const updateDuration = () => player.setDuration(video.duration);
 
+		video.addEventListener("contextmenu", (e) => e.preventDefault());
 		video.addEventListener("timeupdate", updateTime);
 		video.addEventListener("loadedmetadata", updateDuration);
 		video.addEventListener("enterpictureinpicture", () =>
@@ -53,6 +54,7 @@ export default function VideoPlayer({
 		);
 
 		return () => {
+			video.removeEventListener("contextmenu", (e) => e.preventDefault());
 			video.removeEventListener("timeupdate", updateTime);
 			video.removeEventListener("loadedmetadata", updateDuration);
 			video.removeEventListener("enterpictureinpicture", () =>
@@ -298,6 +300,51 @@ export default function VideoPlayer({
 					</div>
 				</div>
 			</div>
+		</div>
+	);
+}
+
+
+export function VideoTabs({
+	topic,
+	videoIds,
+	currentVideo,
+	onClick,
+}: {
+	topic: CourseInfo;
+	videoIds: string[];
+	onClick: (topic: CourseInfo | null, videoUrl: string | null) => void;
+	currentVideo: string;
+}) {
+	const [, setActiveVideo] = useState<{
+		url: string | null;
+		id: string;
+	} | null>(null);
+	const handleVideoClick = (
+		topic: CourseInfo | null,
+		videoUrl: string | null,
+		id: string
+	) => {
+		setActiveVideo({ url: videoUrl, id });
+		onClick(topic, videoUrl);
+	};
+	return (
+		<div className="flex items-center gap-1 bg-gray-300 *:text-sm rounded-md p-1">
+			{videoIds.map((video, idx) => (
+				<button
+					key={video + idx}
+					onClick={() =>
+						handleVideoClick(topic, video ?? null, topic.record_id + idx)
+					}
+					className={`p-1 rounded-md text-black transition-colors  ${
+						currentVideo === video
+							? "bg-primary text-white"
+							: "hover:bg-gray-200"
+					}`}
+				>
+					Video Teil {idx + 1}
+				</button>
+			))}
 		</div>
 	);
 }

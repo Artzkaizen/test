@@ -2,12 +2,12 @@ import { useState } from "react";
 import parse from "html-react-parser";
 import { CourseInfo } from "@/types/course";
 import { cn, formatTime } from "@/lib/utils";
+import VideoPlayer from "./video-player";
 
 const tabs = [
 	{ id: "tagesinhalte", label: "Tagesinhalte" },
 	{ id: "tagesfolien", label: "Tagesfolien" },
 	{ id: "präsentation", label: "Präsentation" },
-	{ id: "discuss", label: "Discuss" },
 	{ id: "transcript", label: "Transcript" },
 ];
 
@@ -19,6 +19,30 @@ export interface Cue {
 
 interface CourseTabsProps {
 	topic: CourseInfo;
+}
+
+export function CourseComponent({
+	topic,
+	videoURL,
+}: {
+	topic: CourseInfo;
+	videoURL: string | null;
+}) {
+	return (
+		<section className="w-full h-full">
+			{videoURL ? (
+				topic?.recording_ids?.includes(videoURL) && (
+					<VideoPlayer
+						topic={topic}
+						src={`https://vroom.b-trend.media/presentation/${videoURL}/video/webcams.webm`}
+					/>
+				)
+			) : (
+				<div className="font-bold w-full">Kein Video verfügbar</div>
+			)}
+			<CourseTabs topic={topic} />
+		</section>
+	);
 }
 
 export default function CourseTabs({ topic }: CourseTabsProps) {
@@ -49,21 +73,20 @@ export default function CourseTabs({ topic }: CourseTabsProps) {
 				</nav>
 			</div>
 
-			{activeTab === "tagesinhalte" && (
-				<div>{parse(topic?.tagesinhalte ?? "")}</div>
-			)}
-			<div className="mt-4 h-[70vh] w-full overflow-auto p-4">
+			<div className="h-full w-full overflow-auto p-4">
+				{activeTab === "tagesinhalte" && (
+					<div className="h-[100vh]">{parse(topic?.tagesinhalte ?? "")}</div>
+				)}
 				{activeTab === "transcript" && (
-					<div>
-						<h2 className="text-lg font-semibold">Transcript</h2>
-						<div className="space-y-4">
+					<div className="h-[100vh]">
+						<div>Transcript</div>
+						<div className="space-y-4 w-full h-full">
 							{cues.map((cue, index) => (
 								<div
 									key={index}
 									className={`flex cursor-pointer ${
 										activeCueIndex === index ? "bg-blue-100" : ""
 									}`}
-									// onClick={() => onTranscriptClick(cue.startTime)}
 								>
 									<span className="w-12 flex-shrink-0 text-gray-500">
 										{formatTime(cue.startTime)}
@@ -75,28 +98,29 @@ export default function CourseTabs({ topic }: CourseTabsProps) {
 					</div>
 				)}
 
-				{activeTab === "tagesfolien" &&
-					(topic.tafelbild ? (
-						<iframe
-							className="h-full w-full"
-							src={`https://staging.b-trend.digital/pluginfile.php/${topic.tafelbild}`}
-						></iframe>
-					) : (
-						<div className="h-[20vh] w-[50vw]">Tafelbild content goes here</div>
-					))}
-				{activeTab === "präsentation" &&
-					(topic.präsentation ? (
-						<iframe
-							className="h-full w-full"
-							src={`https://staging.b-trend.digital/pluginfile.php/${topic.präsentation}`}
-						></iframe>
-					) : (
-						<div className="h-[20vh] w-[50vw]">
-							Presentation content goes here
-						</div>
-					))}
-				{activeTab === "discuss" && (
-					<div className="h-[20vh] w-[50vw]">Discuss content goes here</div>
+				{activeTab === "tagesfolien" && (
+					<>
+						{topic.tafelbild && topic.tafelbild !== "null" ? (
+							<iframe
+								className="w-full h-[100vh]"
+								src={`/pluginfile.php/${topic.tafelbild}`}
+							></iframe>
+						) : (
+							<div>Tafelbild content goes here</div>
+						)}
+					</>
+				)}
+				{activeTab === "präsentation" && (
+					<>
+						{topic.präsentation && topic.präsentation !== "null" ? (
+							<iframe
+								className="w-full h-[100vh]"
+								src={`/pluginfile.php/${topic.präsentation}`}
+							></iframe>
+						) : (
+							<div>Presentation content goes here</div>
+						)}
+					</>
 				)}
 			</div>
 		</div>
