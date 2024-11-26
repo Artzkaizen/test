@@ -1,0 +1,22 @@
+{
+  "en": {
+    "noTopic": "No Topics available yet",
+    "noVideo": "No Video Available",
+    "overviewTitle": "Course Overview",
+    "addTopicText": "Add",
+    "editTopicText": "Edit",
+    "deleteTopicText": "Delete",
+    "multiVideo": "Part",
+    "groupDrownTitle": "All groups"
+  },
+  "de": {
+    "noVideo": "Kein Video vefügbar",
+    "noTopic": "Noch keine Themen verfügbar",
+    "overviewTitle": "Übersicht",
+    "addTopicText": "Neuer Eintrag",
+    "editTopicText": "Bearbeiten",
+    "deleteTopicText": "Löschen",
+    "multiVideo": "Teil",
+    "groupDrownTitle": "Alle Teilnehmer/innen"
+  }
+}
