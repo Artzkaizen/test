@@ -18,4 +18,19 @@ export default defineConfig({
 			},
 		},
 	},
+	server: {
+		proxy: {
+		  '/api/recording': {
+			target: 'https://vroom.b-trend.digital',
+			changeOrigin: true,
+			secure: false,  // Disable SSL verification for self-signed certificates
+			rewrite: (path) => {
+			  console.log('Rewriting path:', path); // Debugging line
+			  const newpath = path.replace(/^\/api\/recording/, '');
+			  console.log('Rewriting path:', newpath); // Debugging line
+			  return newpath;
+			},
+		},
+		},
+	  },
 });
